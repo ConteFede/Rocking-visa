@@ -1,0 +1,29 @@
+#creamos conexión
+USE stg_visa;
+CREATE USER uservs@'localhost' IDENTIFIED BY 'uservs123';
+GRANT ALL ON stg_visa.* TO uservs@'localhost';
+;
+
+#testeamos errores de conexión por tiempo
+SHOW SESSION VARIABLES LIKE 'wait_timeout';
+set global max_allowed_packet=67108864;
+
+#vemos las conexiones que kick
+SHOW GLOBAL STATUS LIKE  'Aborted_connects';
+SET GLOBAL connect_timeout = 10;
+
+#Creamos tablas de ciudades de eeuu
+CREATE TABLE tabla_US(c
+
+#creamos database de dw visa
+CREATE DATABASE dw_visa;
+USE dw_visa;
+GRANT ALL ON dw_visa.* TO uservs@'localhost';
+
+
+#consulta prueba final
+SELECT dw_proc.case_id, dw_proc.estado, dw_proc.sueldo, COUNT(*)
+FROM dw_visa.dw_proc 
+LEFT JOIN dw_rel1 ON dw_proc.case_id = dw_rel1.c_id
+GROUP BY dw_proc.case_id, dw_proc.estado, dw_proc.sueldo
+ORDER BY sueldo DESC;
